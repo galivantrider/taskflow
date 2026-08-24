@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:taskflow/presentation/auth/auth.provider.dart';
 import 'auth.provider.dart';
 
 enum AuthStatus {
