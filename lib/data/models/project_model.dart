@@ -28,4 +28,9 @@ class ProjectModel {
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }
+
+  ProjectModel copyWith({String? name, String? description, int? taskCount}) =>
+      ProjectModel(id: id, orgId: orgId, name: name ?? this.name,
+          description: description ?? this.description, taskCount: taskCount ?? this.taskCount,
+          status: status, createdAt: createdAt);
 }

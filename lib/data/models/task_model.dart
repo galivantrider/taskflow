@@ -34,4 +34,12 @@ class TaskModel {
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }
+
+  TaskModel copyWith({String? title, String? description, String? status,
+      String? priority, String? assigneeId, bool clearAssignee = false, DateTime? dueDate}) =>
+      TaskModel(id: id, projectId: projectId, title: title ?? this.title,
+          description: description ?? this.description, status: status ?? this.status,
+          priority: priority ?? this.priority,
+          assigneeId: clearAssignee ? null : assigneeId ?? this.assigneeId,
+          dueDate: dueDate ?? this.dueDate, createdAt: createdAt);
 }

@@ -135,6 +135,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           )
                         : const Text('Login'),
                   ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen())),
+                    child: const Text('New here? Create a local account'),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('Demo: ava.admin@nimbusdigital.test / password123', textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -143,4 +150,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ),
     );
   }
+}
+
+class RegisterScreen extends StatefulWidget { const RegisterScreen({super.key}); @override State<RegisterScreen> createState() => _RegisterScreenState(); }
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _form = GlobalKey<FormState>(); final _name = TextEditingController(); final _email = TextEditingController(); final _password = TextEditingController();
+  @override void dispose() { _name.dispose(); _email.dispose(); _password.dispose(); super.dispose(); }
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Create account')), body: Center(child: SingleChildScrollView(padding: const EdgeInsets.all(24), child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 420), child: Form(key: _form, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+    TextFormField(controller: _name, decoration: const InputDecoration(labelText: 'Name'), validator: (v) => v == null || v.trim().isEmpty ? 'Name is required' : null),
+    TextFormField(controller: _email, decoration: const InputDecoration(labelText: 'Email'), keyboardType: TextInputType.emailAddress, validator: (v) => v == null || !v.contains('@') ? 'Enter a valid email' : null),
+    TextFormField(controller: _password, decoration: const InputDecoration(labelText: 'Password'), obscureText: true, validator: (v) => v == null || v.length < 6 ? 'Use at least 6 characters' : null),
+    const SizedBox(height: 24), FilledButton(onPressed: () { if (_form.currentState!.validate()) { ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Account created locally. Please sign in with a demo account.'))); Navigator.pop(context); } }, child: const Text('Create account')),
+  ]))))));
 }

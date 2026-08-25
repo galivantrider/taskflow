@@ -12,23 +12,38 @@ enum AuthStatus {
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
+  final String? email;
+  final String? orgId;
+  final String? role;
 
   const AuthState({
     required this.status,
     this.errorMessage,
+    this.email,
+    this.orgId,
+    this.role,
   });
 
   const AuthState.initial()
       : status = AuthStatus.initial,
-        errorMessage = null;
+        errorMessage = null,
+        email = null,
+        orgId = null,
+        role = null;
 
   AuthState copyWith({
     AuthStatus? status,
     String? errorMessage,
+    String? email,
+    String? orgId,
+    String? role,
   }) {
     return AuthState(
       status: status ?? this.status,
       errorMessage: errorMessage,
+      email: email ?? this.email,
+      orgId: orgId ?? this.orgId,
+      role: role ?? this.role,
     );
   }
 }
@@ -61,6 +76,7 @@ class AuthController extends Notifier<AuthState> {
         email: email,
         password: password,
       );
+      final credential = await repository.credentialsForEmail(email);
 
       final expiry = DateTime.now().add(
         Duration(
@@ -72,10 +88,14 @@ class AuthController extends Notifier<AuthState> {
         accessToken: response.accessToken,
         refreshToken: response.refreshToken,
         accessTokenExpiry: expiry,
+        email: email,
       );
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
+        email: email,
+        orgId: credential?.orgId,
+        role: credential?.role,
       );
     } catch (e) {
       state = state.copyWith(
@@ -86,6 +106,20 @@ class AuthController extends Notifier<AuthState> {
             ),
       );
     }
+  }
+
+  Future<void> restore() async {
+    final storage = ref.read(secureStorageProvider);
+    final expiry = await storage.getAccessTokenExpiry();
+    final email = await storage.getSessionEmail();
+    if (expiry == null || email == null) { state = state.copyWith(status: AuthStatus.unauthenticated); return; }
+    if (expiry.isBefore(DateTime.now())) {
+      final response = await ref.read(authRepositoryProvider).refreshToken();
+      await storage.saveSession(accessToken: response.accessToken, refreshToken: response.refreshToken,
+          accessTokenExpiry: DateTime.now().add(Duration(seconds: response.accessTokenExpiresInSeconds)), email: email);
+    }
+    final credential = await ref.read(authRepositoryProvider).credentialsForEmail(email);
+    state = state.copyWith(status: AuthStatus.authenticated, email: email, orgId: credential?.orgId, role: credential?.role);
   }
 
   Future<void> logout() async {

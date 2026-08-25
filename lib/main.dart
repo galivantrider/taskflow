@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/router/app_router.dart';
+import 'presentation/auth/auth.controller.dart';
+import 'presentation/auth/login_screen.dart';
+import 'presentation/home/home_screen.dart';
 
 
 void main() {
@@ -19,11 +21,14 @@ class TaskFlowApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'TaskFlow',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      routerConfig: AppRouter.router,
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      home: const _SessionGate(),
     );
   }
 }
+
+class _SessionGate extends ConsumerStatefulWidget { const _SessionGate(); @override ConsumerState<_SessionGate> createState() => _SessionGateState(); }
+class _SessionGateState extends ConsumerState<_SessionGate> { @override void initState(){super.initState();Future.microtask(()=>ref.read(authControllerProvider.notifier).restore());} @override Widget build(BuildContext context){final state=ref.watch(authControllerProvider);if(state.status==AuthStatus.initial||state.status==AuthStatus.loading)return const Scaffold(body:Center(child:CircularProgressIndicator()));return state.status==AuthStatus.authenticated?const HomeScreen():const LoginScreen();} }

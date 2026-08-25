@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 class MockDataSource {
   static const String _assetPath =
-      'assets/mock_data/mock-Data.json';
+      'assets/mock_data/mock-data.json';
 
   Map<String, dynamic>? _data;
 
@@ -19,6 +19,8 @@ class MockDataSource {
   Future<List<Map<String, dynamic>>> getList(String key) async {
     await _loadData();
 
+    await Future<void>.delayed(const Duration(milliseconds: 350));
+
     final value = _data![key];
 
     if (value is! List) {
@@ -32,6 +34,8 @@ class MockDataSource {
 
   Future<Map<String, dynamic>> getObject(String key) async {
     await _loadData();
+
+    await Future<void>.delayed(const Duration(milliseconds: 250));
 
     final value = _data![key];
 

@@ -1,17 +1,33 @@
-# taskflow
+# TaskFlow
 
-A new Flutter project.
+A Flutter project-management demo built against a single local JSON asset—no network backend is used.
 
-## Getting Started
+## Included flows
 
-This project is a starting point for a Flutter application.
+- Splash/session check, secure mock-token storage, refresh after expiry, login, local registration simulation, and logout
+- Organization-scoped projects with refresh, creation, details, task summaries, and admin-protected deletion
+- Tasks with creation, details, status and priority changes, assignment/unassignment, filtering, and deletion confirmation
+- Loading, empty, retry/error, and pull-to-refresh UI states
 
-A few resources to get you started if this is your first Flutter project:
+## Architecture
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+See [ARCHITECTURE.md](ARCHITECTURE.md). The presentation layer talks to repository contracts; implementations access `MockDataSource`, which is the only code that reads `assets/mock_data/mock-data.json`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Demo credentials
+
+Use the credentials in `auth_mock.test_credentials` inside the mock asset. For example: `ava.admin@nimbusdigital.test` / `password123`.
+
+## Run
+
+```bash
+flutter pub get
+flutter run
+flutter test
+flutter build apk --release
+```
+
+Requires Flutter with Dart `^3.13.1` (the SDK constraint in `pubspec.yaml`).
+
+## Mock behavior and limitations
+
+The data source adds a small artificial delay so loading states are observable. Project and task mutations live in repository memory for the active app run; persisting those mutations and an offline mutation queue are intentionally out of scope for this mock implementation. The provided data is retained for offline-style local viewing because it is packaged with the app.

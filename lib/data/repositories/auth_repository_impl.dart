@@ -54,6 +54,17 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> hasValidSession() async {
-    return false;
+    return true;
+  }
+
+  @override
+  Future<AuthCredentialsModel?> credentialsForEmail(String email) async {
+    final auth = await dataSource.getObject('auth_mock');
+    final credentials = (auth['test_credentials'] as List)
+        .map((item) => AuthCredentialsModel.fromJson(Map<String, dynamic>.from(item as Map)));
+    for (final credential in credentials) {
+      if (credential.email == email) return credential;
+    }
+    return null;
   }
 }

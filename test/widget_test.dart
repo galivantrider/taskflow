@@ -1,16 +1,20 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:taskflow/main.dart';
+import 'package:taskflow/presentation/auth/login_screen.dart';
 
 void main() {
-  testWidgets('TaskFlow app loads', (WidgetTester tester) async {
+  testWidgets('login form shows meaningful validation', (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
-        child: TaskFlowApp(),
+        child: MaterialApp(home: LoginScreen()),
       ),
     );
 
-    expect(find.text('TaskFlow'), findsWidgets);
+    await tester.tap(find.text('Login'));
+    await tester.pump();
+    expect(find.text('Email is required'), findsOneWidget);
+    expect(find.text('Password is required'), findsOneWidget);
   });
 }

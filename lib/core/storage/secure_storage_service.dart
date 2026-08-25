@@ -4,17 +4,19 @@ class SecureStorageService {
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
   static const _accessTokenExpiryKey = 'access_token_expiry';
+  static const _emailKey = 'session_email';
 
   final FlutterSecureStorage _storage;
 
-const SecureStorageService({
-  this._storage = const FlutterSecureStorage(),
-});
+  const SecureStorageService({
+    FlutterSecureStorage storage = const FlutterSecureStorage(),
+  }) : _storage = storage;
 
   Future<void> saveSession({
     required String accessToken,
     required String refreshToken,
     required DateTime accessTokenExpiry,
+    required String email,
   }) async {
     await _storage.write(
       key: _accessTokenKey,
@@ -30,6 +32,7 @@ const SecureStorageService({
       key: _accessTokenExpiryKey,
       value: accessTokenExpiry.toIso8601String(),
     );
+    await _storage.write(key: _emailKey, value: email);
   }
 
   Future<String?> getAccessToken() {
@@ -52,9 +55,12 @@ const SecureStorageService({
     return DateTime.tryParse(value);
   }
 
+  Future<String?> getSessionEmail() => _storage.read(key: _emailKey);
+
   Future<void> clearSession() async {
     await _storage.delete(key: _accessTokenKey);
     await _storage.delete(key: _refreshTokenKey);
     await _storage.delete(key: _accessTokenExpiryKey);
+    await _storage.delete(key: _emailKey);
   }
 }
