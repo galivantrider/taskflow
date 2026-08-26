@@ -8,9 +8,9 @@ class SecureStorageService {
 
   final FlutterSecureStorage _storage;
 
-  const SecureStorageService({
-    FlutterSecureStorage storage = const FlutterSecureStorage(),
-  }) : _storage = storage;
+const SecureStorageService({
+  this._storage = const FlutterSecureStorage(),
+});
 
   Future<void> saveSession({
     required String accessToken,

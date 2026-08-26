@@ -12,7 +12,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Continue'));
+    await tester.tap(find.text('Login to TaskFlow'));
     await tester.pump();
     expect(find.text('Email is required'), findsOneWidget);
     expect(find.text('Password is required'), findsOneWidget);

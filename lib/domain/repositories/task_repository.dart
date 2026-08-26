@@ -6,6 +6,6 @@ abstract class TaskRepository {
   Future<TaskModel> createTask({required String projectId, required String title, required String description, required String priority, DateTime? dueDate});
   Future<TaskModel> updateTask(TaskModel task);
   Future<void> deleteTask(String id);
-  Future<void> assignTask({required String taskId, required String? userId, required String orgId});
+  Future<TaskModel> assignTask({required String taskId, required String? userId, required String orgId});
   Future<List<UserModel>> getOrgMembers(String orgId);
 }

@@ -16,9 +16,9 @@ class TaskRepositoryImpl implements TaskRepository {
   }
   @override Future<TaskModel> updateTask(TaskModel task) async { final tasks = await _all(); final index = tasks.indexWhere((item) => item.id == task.id); if (index < 0) throw Exception('Task not found'); tasks[index] = task; return task; }
   @override Future<void> deleteTask(String id) async { final tasks = await _all(); if (!tasks.any((item) => item.id == id)) throw Exception('Task not found'); tasks.removeWhere((item) => item.id == id); }
-  @override Future<void> assignTask({required String taskId, required String? userId, required String orgId}) async {
+  @override Future<TaskModel> assignTask({required String taskId, required String? userId, required String orgId}) async {
     if (userId != null) { final members = (await _source.getList('org_members')).map(OrgMemberModel.fromJson); if (!members.any((m) => m.orgId == orgId && m.userId == userId)) throw Exception('Assignee does not belong to this organization'); }
-    final tasks = await _all(); final index = tasks.indexWhere((item) => item.id == taskId); if(index < 0) throw Exception('Task not found'); tasks[index] = tasks[index].copyWith(assigneeId: userId, clearAssignee: userId == null);
+    final tasks = await _all(); final index = tasks.indexWhere((item) => item.id == taskId); if(index < 0) throw Exception('Task not found'); final updated = tasks[index].copyWith(assigneeId: userId, clearAssignee: userId == null); tasks[index] = updated; return updated;
   }
   @override Future<List<UserModel>> getOrgMembers(String orgId) async {
     final ids = (await _source.getList('org_members')).map(OrgMemberModel.fromJson).where((m) => m.orgId == orgId).map((m) => m.userId).toSet();
